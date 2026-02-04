@@ -112,6 +112,8 @@ const fetch = async () => {
         round.value = r.data
         const m = await axios.get(`${staff}/member/eva`,{headers:{Authorization: `Bearer ${token}`}})
         member.value = m.data
+        const res = await axios.get(`${staff}/eva`,{headers:{Authorization: `Bearer ${token}`}})
+        result.value = res.data
     }catch(err){
         console.error("Error Fetching!",err)
     }
@@ -140,6 +142,10 @@ const del = async (id_eva:number) => {
     }catch(err){
         console.error("Error Delete",err)
     }
+}
+
+const go = (id_eva:number) => {
+    navigateTo({path: `Eva_commit-${id_eva}`})
 }
 
 onMounted(fetch)

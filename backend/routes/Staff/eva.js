@@ -84,8 +84,8 @@ router.get('/n',verifyToken,requireRole('ฝ่ายบุคลากร'),asy
 // API สำหรับ Insert ข้อมูล
 router.post('/',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
     try{
-        const {id_member,id_sys,day_eva} = req.params
-        const [rows] = await db.query(`insert into tb_eva (id_member,id_sys,day_eva,status_sys) values (?,?,?,?)`,[id_member,id_sys,day_eva,1])
+        const {id_member,id_sys,day_eva} = req.body
+        const [rows] = await db.query(`insert into tb_eva (id_member,id_sys,day_eva,status_eva) values (?,?,?,?)`,[id_member,id_sys,day_eva,1])
         // res.json(rows)
         res.json({rows,message:'Insert Success'})
     }catch(err){
@@ -98,13 +98,26 @@ router.post('/',verifyToken,requireRole('ฝ่ายบุคลากร'),asy
 router.put('/:id_eva',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
     try{
         const {id_eva} = req.params
-        const {id_member,id_sys,day_eva} = req.params
-        const [rows] = await db.query(`update tb_eva set id_member=?,id_sys=?,day_eva=?,status_sys=? where id_eva='${id_eva}'`,[id_member,id_sys,day_eva,1])
+        const {id_member,id_sys,day_eva} = req.body
+        const [rows] = await db.query(`update tb_eva set id_member=?,id_sys=?,day_eva=?,status_eva=? where id_eva='${id_eva}'`,[id_member,id_sys,day_eva,1])
         // res.json(rows)
         res.json({rows,message:'Update Success'})
     }catch(err){
         console.error("Error Update",err)
         res.status(500).json({message:'Error Update'})
+    }
+})
+
+// API สำหรับ Delete ข้อมูล
+router.delete('/:id_eva',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
+    try{
+        const {id_eva} = req.params
+        const [rows] = await db.query(`delete from tb_eva where id_eva='${id_eva}'`)
+        // res.json(rows)
+        res.json({rows,message:'Delete Success'})
+    }catch(err){
+        console.error("Error Delete",err)
+        res.status(500).json({message:'Error Delete'})
     }
 })
 
