@@ -168,5 +168,9 @@ onMounted(fetch)
 </script>
 
 <style scoped>
-
+@media print {
+    .v-btn,.noP{
+        display: none !important;
+    }
+}
 </style>

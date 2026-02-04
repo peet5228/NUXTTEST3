@@ -21,6 +21,11 @@ app.use('/api/auth',auth)
 const profile = require('./routes/profile')
 app.use('/api/profile',profile)
 
+const dash = require('./routes/dash')
+app.use('/api/dash',dash)
+
+
+
 // Endpoint Staff API
 const member = require('./routes/Staff/member')
 app.use('/api/Staff/member',member)
@@ -45,6 +50,9 @@ app.use('/api/Staff/status',status)
 
 const doc = require('./routes/Staff/doc')
 app.use('/api/Staff/doc',doc)
+
+const score_eva = require('./routes/Staff/score_member')
+app.use('/api/Staff/score_member',score_eva)
 
 // Endpoint Eva API
 const edit_eva = require('./routes/Eva/edit_eva')

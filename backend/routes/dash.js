@@ -29,13 +29,13 @@ router.get('/staff',verifyToken,requireRole('ฝ่ายบุคลากร')
 
         res.json({
             box : [
-                {tile:'แบบประเมินทั้งหมด',value:evaCount.total || '0' },
-                {tile:'แบบประเมินที่ไม่สำเร็จ',value:evaCount.total > 0 ? ` ${ (one.total*100/evaCount.total).toFixed(2) }%` : '00.00%' },
-                {tile:'แบบประเมินที่สำเร็จ',value:evaCount.total > 0 ? ` ${ (two.total*100/evaCount.total).toFixed(2) }%` : '00.00%' },
+                {title:'แบบประเมินทั้งหมด',value:evaCount.total || '0' },
+                {title:'แบบประเมินที่ไม่สำเร็จ',value:evaCount.total > 0 ? ` ${ (one.total*100/evaCount.total).toFixed(2) }%` : '00.00%' },
+                {title:'แบบประเมินที่สำเร็จ',value:evaCount.total > 0 ? ` ${ (two.total*100/evaCount.total).toFixed(2) }%` : '00.00%' },
             ],
             box2 : [
-                {tile:'ผู้รับการประเมินผลทั้งหมด',value:eva.total || '0' },
-                {tile:'กรรมการประเมินผลทั้งหมด',value:commit.total || '0' },
+                {title:'ผู้รับการประเมินผลทั้งหมด',value:eva.total || '0' },
+                {title:'กรรมการประเมินผลทั้งหมด',value:commit.total || '0' },
             ]
         })
         // res.json({rows,message:''})
@@ -46,7 +46,7 @@ router.get('/staff',verifyToken,requireRole('ฝ่ายบุคลากร')
 })
 
 // API สำหรับ Get ข้อมูล
-router.get('/eva',verifyToken,requireRole('ผู้รับการประเมิน'),async (req,res) => {
+router.get('/eva',verifyToken,requireRole('ผู้รับการประเมินผล'),async (req,res) => {
     try{
     const id_member = req.user.id_member
         const [[evaCount]] = await db.query(`select count(*) as total from tb_eva,tb_member where tb_member.id_member='${id_member}' and tb_eva.id_member=tb_member.id_member`)
@@ -54,9 +54,23 @@ router.get('/eva',verifyToken,requireRole('ผู้รับการประ�
         const [[two]] = await db.query(`select count(*) as total from tb_eva,tb_member where tb_member.id_member='${id_member}' and tb_eva.id_member=tb_member.id_member and status_eva!=1`)
         res.json({
             box : [
-                {title:'แบบประเมินทั้งหมด',value:eva}
+                {title:'แบบประเมินทั้งหมด',value:evaCount.total || '0'},
+                {title:'แบบประเมินที่ยังไม่ได้ประเมิน',value:evaCount.total > 0 ? `${ (one.total*100/evaCount.total).toFixed(2) }%` : '00.00%'},
+                {title:'แบบประเมินที่ประเมินแล้ว',value:evaCount.total > 0 ? `${ (two.total*100/evaCount.total).toFixed(2) }%` : '00.00%'},
             ]
         })
+        // res.json({rows,message:''})
+    }catch(err){
+        console.error("Error Get",err)
+        res.status(500).json({message:'Error Get'})
+    }
+})
+
+// API สำหรับ Get ข้อมูล
+router.get('/doc',async (req,res) => {
+    try{
+        const [rows] = await db.query(`select * from tb_doc order by id_doc desc`)
+        res.json(rows)
         // res.json({rows,message:''})
     }catch(err){
         console.error("Error Get",err)

@@ -2,29 +2,9 @@
     <v-container fluid class="py-10">
                 <v-card>
                     <v-sheet class="pa-4 text-center" color="">
-                        <h1 class="text-h5 font-weight-bold">เอกสารหรือคู่มือสำหรับการประเมิน</h1>
+                        <h1 class="text-h5 font-weight-bold">คู่มือสำหรับการประเมิน</h1>
                     </v-sheet>
                     <v-card-text>
-                        <v-form @submit.prevent="saveMember">
-                            <v-row>
-                                <v-col cols="12" md="12">
-                                    <v-text-field label="ชื่อเอกสาร" v-model="name_doc" ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="12">
-                                    <v-file-input label="ไฟล์" v-model="file" accept="image/*" />
-                                    <span class="text-error font-weight-bold">*** รองรับไฟล์ไม่เกิน 10 MB ***</span>
-                                </v-col>
-                                <v-row>
-                                    <v-col cols="12" md="6">
-                                        <v-btn color="blue" block type="submit">บันทึก</v-btn>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-btn color="error" block type="reset">ยกเลิก</v-btn>
-                                    </v-col>
-                                </v-row>
-                            </v-row>
-                        </v-form>
-                        <br><br><br>
                         <v-table>
                             <thead>
                                 <tr>
@@ -32,7 +12,7 @@
                                     <th class="text-center border">ชื่อเอกสาร</th>
                                     <th class="text-center border">วันที่เพิ่ม</th>
                                     <th class="text-center border">ไฟล์</th>
-                                    <th class="text-center border">จัดการ</th>
+                                    <!-- <th class="text-center border">จัดการ</th> -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -42,10 +22,6 @@
                                     <td class="text-center border">{{ items.day_doc }}</td>
                                     <td class="text-center border">
                                         <v-btn color="warning" size="small" prepend-icon="mdi-eye" @click="views(items.file)">เปิดดู</v-btn>
-                                    </td>
-                                    <td class="text-center border">
-                                        <!-- <v-btn color="warning" size="small" class="text-white" @click="edit(items)">แก้ไข</v-btn>&nbsp; -->
-                                        <v-btn color="error" size="small" class="text-white" @click="del(items.id_doc)">ลบ</v-btn>
                                     </td>
                                 </tr>
                                 <tr v-if="result.length ===0">
@@ -70,7 +46,7 @@ const file = ref<File | null>(null)
 
 const fetch = async () => {
     try{
-        const res = await axios.get(`${staff}/doc`,{headers:{Authorization: `Bearer ${token}`}})
+        const res = await axios.get(`${api}/dash/doc`)
         result.value = res.data
     }catch(err){
         console.error("Error Fetching!",err)
@@ -103,7 +79,7 @@ const del = async (id_doc:number) => {
 }
 
 const views = (filename:string) => {
-    const u = new URL(`/uploads/document/${filename}`,staff).href
+    const u = new URL(`/uploads/document/${filename}`,api).href
     window.open(u,'_blank')
 }
 
