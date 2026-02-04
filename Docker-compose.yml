@@ -1,0 +1,68 @@
+services:
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    container_name: Frontend_Container
+    ports: ["3000:3000"]
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: always
+    command: npm run dev -- --host 0.0.0.0
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    networks: ["app-network"]
+ 
+  backend:
+    build: ./backend
+    depends_on:
+      - mysql
+    container_name: Backend_Container
+    ports: ["3001:3001"]
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    restart: always
+    command: npx nodemon -L index.js
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: 1234
+      DB_DATABASE: wday
+      JWT_SECRET: "ntc&&1234"
+      CHOKIDAR_USEPOLLING: true
+    networks: ["app-network"]
+ 
+  phpmyadmin:
+    image: phpmyadmin
+    depends_on:
+      - mysql
+    container_name: PMA_Container
+    ports: ["8080:80"]
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: 1234
+    networks: ["app-network"]
+ 
+  mysql:
+    image: mysql:8.0
+    container_name: MYSQL_Container
+    ports: ["3307:3306"]
+    restart: always
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: wday
+    networks: ["app-network"]
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
