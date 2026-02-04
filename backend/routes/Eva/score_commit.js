@@ -19,6 +19,23 @@ router.get('/user',verifyToken,requireRole('ผู้รับการประ
     }
 })
 
+router.get('/commits',verifyToken,requireRole('ผู้รับการประเมินผล'),async (req,res) => {
+    try{
+        const id_member = req.user.id_member
+        const [[evaRow]] = await db.query(`select * from tb_member m,tb_eva e,tb_system s where m.id_member=? and m.id_member=e.id_member and e.id_sys=s.id_sys order by e.id_eva desc`,
+            [id_member]
+        )
+        const id_eva = evaRow.id_eva
+        const [rows] = await db.query(`select * from tb_commit c,tb_member m where c.id_eva=? and c.id_member=m.id_member`,
+            [id_eva]
+        )
+        res.json(rows)
+    }catch(err){
+        console.error("Error GET User!",err)
+        res.status(500).json({message:'Error GET User!'})
+    }
+})
+
 router.get('/topic',verifyToken,requireRole('ผู้รับการประเมินผล'),async (req,res) => {
     try{
         const id_member = req.user.id_member
@@ -35,16 +52,16 @@ router.get('/topic',verifyToken,requireRole('ผู้รับการปร�
     }
 })
 
-router.get('/topic',verifyToken,requireRole('ผู้รับการประเมินผล'),async (req,res) => {
+router.get('/scores',verifyToken,requireRole('ผู้รับการประเมินผล'),async (req,res) => {
     try{
         const id_member = req.user.id_member
         const [[evaRow]] = await db.query(`select * from tb_member m,tb_eva e,tb_system s where m.id_member=? and m.id_member=e.id_member and e.id_sys=s.id_sys order by e.id_eva desc`,
             [id_member]
         )
         const id_eva = evaRow.id_eva
-        const [rows] = await db.query(`select * from tb_indicate i,tb_evadetail d where i.id_indicate=d.id_indicate and d.status_eva=? and d.id_eva=?`,[1,id_eva])
+        const [rows] = await db.query(`select * from tb_indicate i,tb_evadetail d where i.id_indicate=d.id_indicate and d.status_eva in (2,3,4) and d.id_eva=?`,[id_eva])
         const scores = {}
-        rows.forEach(row =>{
+        rows.map(row =>{
             if(!scores[row.id_indicate]){
                 scores[row.id_indicate] = {
                     a:null,
@@ -52,8 +69,11 @@ router.get('/topic',verifyToken,requireRole('ผู้รับการปร�
                     c:null,
                 }
             }
+            if(row.status_eva === 2)scores[row.id_indicate].a = row.score_commit*row.point_indicate
+            if(row.status_eva === 3)scores[row.id_indicate].b = row.score_commit*row.point_indicate
+            if(row.status_eva === 4)scores[row.id_indicate].c = row.score_commit*row.point_indicate
         })
-        res.json(result)
+        res.json({scores})
     }catch(err){
         console.error("Error GET User!",err)
         res.status(500).json({message:'Error GET User!'})
