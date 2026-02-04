@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import axios from 'axios'
-// import {api} from '../API/base'
+import {api} from '../API/base'
 
 const form = ref({
     first_name:'',
@@ -63,6 +63,10 @@ const conFirmPassword = ref('')
 const show = ref(false)
 const showPw = ref(false)
 const showPw2 = ref(false)
+
+definePageMeta({
+    layout:false
+})
 
 const emailReget = /^[^\s]+@[^\s]+\.[^\s]{2,}$/i
 function validateForm(){
