@@ -31,6 +31,10 @@ const password = ref('')
 const role = ref('')
 const g = ['ฝ่ายบุคลากร','กรรมการประเมิน','ผู้รับการประเมินผล']
 
+definePageMeta({
+    layout:false
+})
+
 const Login = async () =>  {
     try{
         const res = await auth.login({

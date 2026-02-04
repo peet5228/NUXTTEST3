@@ -34,7 +34,7 @@ router.get('/eva',verifyToken,requireRole('ฝ่ายบุคลากร'),a
 // API สำหรับ Get ข้อมูล
 router.get('/commit',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
     try{
-        const [rows] = await db.query(`select id_member,first_name,last_name,email,username,role from tb_member where role='กรรมการประเมินผล' order by id_member desc`)
+        const [rows] = await db.query(`select id_member,first_name,last_name,email,username,role from tb_member where role='กรรมการประเมิน' order by id_member desc`)
         res.json(rows)
         // res.json({rows,message:''})
     }catch(err){

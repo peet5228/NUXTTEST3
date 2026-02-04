@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt')
 const router = express.Router()
 const {verifyToken,requireRole} = require('../../middleware/authMiddleware')
 
-
 // ===== DEMO =====
 // API สำหรับ Get ข้อมูล
 // router.get('/',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
@@ -22,7 +21,7 @@ const {verifyToken,requireRole} = require('../../middleware/authMiddleware')
 // API สำหรับ Get ข้อมูล
 router.get('/',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
     try{
-        const [rows] = await db.query(`select * from tb_topic order by id_topic desc`)
+        const [rows] = await db.query(`select * from tb_system order by id_sys desc`)
         res.json(rows)
         // res.json({rows,message:''})
     }catch(err){
@@ -31,12 +30,10 @@ router.get('/',verifyToken,requireRole('ฝ่ายบุคลากร'),asyn
     }
 })
 
-// API สำหรับ Get ข้อมูล where params
-router.get('/:id_topic',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
+// API สำหรับ Get ข้อมูล
+router.get('/y',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
     try{
-        const {id_topic} = req.params
-        const [rows] = await db.query(`select * from tb_topic where id_topic='${id_topic}' order by id_topic desc`)
-        if(rows.length === 0) return res.status(403).json({message:'Invalid Params'})
+        const [rows] = await db.query(`select * from tb_system where status='y' order by id_sys desc`)
         res.json(rows)
         // res.json({rows,message:''})
     }catch(err){
@@ -48,8 +45,8 @@ router.get('/:id_topic',verifyToken,requireRole('ฝ่ายบุคลาก�
 // API สำหรับ Insert ข้อมูล
 router.post('/',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
     try{
-        const {name_topic} = req.body
-        const [rows] = await db.query(`insert into tb_topic (name_topic) values (?)`,[name_topic])
+        const {day_open,day_out,round_sys,year_sys,status_sys} = req.body
+        const [rows] = await db.query(`insert into tb_system (day_open,day_out,round_sys,year_sys,status_sys) values (?,?,?,?,?)`,[day_open,day_out,round_sys,year_sys,status_sys])
         // res.json(rows)
         res.json({rows,message:'Insert Success'})
     }catch(err){
@@ -59,11 +56,11 @@ router.post('/',verifyToken,requireRole('ฝ่ายบุคลากร'),asy
 })
 
 // API สำหรับ Update ข้อมูล
-router.put('/:id_topic',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
+router.put('/:id_sys',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
     try{
-        const {id_topic} = req.params
-        const {name_topic} = req.body
-        const [rows] = await db.query(`update tb_topic set name_topic=? where id_topic='${id_topic}'`,[name_topic])
+        const {id_sys} = req.params
+        const {day_open,day_out,round_sys,year_sys,status_sys} = req.body
+        const [rows] = await db.query(`update tb_system set day_open=?,day_out=?,round_sys=?,year_sys=?,status_sys=? where id_sys='${id_sys}'`,[day_open,day_out,round_sys,year_sys,status_sys])
         // res.json(rows)
         res.json({rows,message:'Update Success'})
     }catch(err){
@@ -73,11 +70,11 @@ router.put('/:id_topic',verifyToken,requireRole('ฝ่ายบุคลาก�
 })
 
 // API สำหรับ Delete ข้อมูล
-router.delete('/:id_topic',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
+router.delete('/:id_sys',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
     try{
-        const {id_topic} = req.params
-        // const {name_topic} = req.body
-        const [rows] = await db.query(`delete from tb_topic where id_topic='${id_topic}'`)
+        const {id_sys} = req.params
+        // const {day_open,day_out,round_sys,year_sys,status_sys} = req.body
+        const [rows] = await db.query(`delete from tb_system where id_sys='${id_sys}'`)
         // res.json(rows)
         res.json({rows,message:'Delete Success'})
     }catch(err){
