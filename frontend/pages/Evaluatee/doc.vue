@@ -1,0 +1,91 @@
+<template>
+    <v-container fluid class="py-10">
+                <v-card>
+                    <v-sheet class="pa-4 text-center" color="">
+                        <h1 class="text-h5 font-weight-bold">คู่มือสำหรับการประเมิน</h1>
+                    </v-sheet>
+                    <v-card-text>
+                        <v-table>
+                            <thead>
+                                <tr>
+                                    <th class="text-center border">ลำดับ</th>
+                                    <th class="text-center border">ชื่อเอกสาร</th>
+                                    <th class="text-center border">วันที่เพิ่ม</th>
+                                    <th class="text-center border">ไฟล์</th>
+                                    <!-- <th class="text-center border">จัดการ</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(items,index) in result" :key="items.id_doc">
+                                    <td class="text-center border">{{ index+1 }}</td>
+                                    <td class="text-center border">{{ items.name_doc }}</td>
+                                    <td class="text-center border">{{ items.day_doc }}</td>
+                                    <td class="text-center border">
+                                        <v-btn color="warning" size="small" prepend-icon="mdi-eye" @click="views(items.file)">เปิดดู</v-btn>
+                                    </td>
+                                </tr>
+                                <tr v-if="result.length ===0">
+                                    <td colspan="10" class="text-center border">ไม่พบข้อมูล</td>
+                                </tr>
+                            </tbody>
+                        </v-table>
+                    </v-card-text>
+                </v-card>
+    </v-container>
+</template>
+
+<script setup lang="ts">
+import axios from 'axios'
+import {api,staff} from '../../API/base'
+
+const token = process.client ? localStorage.getItem('token') : null
+
+const result = ref([])
+const name_doc = ref('')
+const file = ref<File | null>(null)
+
+const fetch = async () => {
+    try{
+        const res = await axios.get(`${api}/dash/doc`)
+        result.value = res.data
+    }catch(err){
+        console.error("Error Fetching!",err)
+    }
+}
+
+const saveMember = async () =>{
+    if(!name_doc || !file.value) return alert('กรุณากรอกข้อมูลให้ครบถ้วน')
+    try{
+        const formData = new FormData()
+        formData.append('file',file.value)
+        formData.append('name_doc',name_doc.value)
+        // ? await axios.put(`${staff}/topic/${form.value.id_topic}`,form.value,{headers:{Authorization:`Bearer ${token}`}})
+        await axios.post(`${staff}/doc`,formData,{headers:{Authorization: `Bearer ${token}`}})
+        alert('ทำรายการสำเร็จ')
+        await fetch()
+    }catch(err){
+        console.error('Error!',err)
+    }
+}
+
+const del = async (id_doc:number) => {
+    try{
+        if(!confirm("ต้องการลบใช่หรือไม่?")) return
+        await axios.delete(`${staff}/doc/${id_doc}`,{headers:{Authorization:`Bearer ${token}`}})
+        await fetch()
+    }catch(err){
+        console.error("Error Delete",err)
+    }
+}
+
+const views = (filename:string) => {
+    const u = new URL(`/uploads/document/${filename}`,api).href
+    window.open(u,'_blank')
+}
+
+onMounted(fetch)
+</script>
+
+<style scoped>
+
+</style>
