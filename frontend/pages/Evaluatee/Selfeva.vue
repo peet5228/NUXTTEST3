@@ -4,7 +4,7 @@
             <v-col cols="12">
                 <v-form v-if="user.status_eva === 1" @submit.prevent="saveScore">
                     <h1 class="text-h5 font-weight-bold">แบบประเมินตนเอง</h1>
-                    <v-card class="mt-2">
+                    <v-card class="mt-2 pa-2">
                         <p>ชื่อ - นามสกุล : {{ user.first_name }} {{ user.last_name }}</p>
                         <p>รอบประเมินที่ : {{ user.round_sys }} ปี {{ user.year_sys }}</p>
                     </v-card>
@@ -19,7 +19,7 @@
                                         </p>
                                         <v-textarea label="คำอธิบายเพิ่มเติม(ถ้ามี)" v-model="indicate.detail_eva" rows="2"></v-textarea>
                                         <v-file-input label="file" @change="onFileChange($event,topic.id_topic,indicate.id_indicate)" v-model="indicate.file_eva" accpet="image/*,.pdf" ></v-file-input>
-                                        <v-select v-if="indicate.check_indicate" label="ใส่คะแนนประเมิน 1-4" v-model="indicate.score" :items="[1,2,3,4]"></v-select>
+                                        <v-select v-if="indicate.check_indicate === 'y'" label="ใส่คะแนนประเมิน 1-4" v-model="indicate.score" :items="[1,2,3,4]"></v-select>
                                         <v-text-field v-else label="ใส่คะแนนประเมิน 1-4" v-model="indicate.score" type="number" @input="indicate.score > 4 ? indicate.score = 4 : null"></v-text-field>
                                     </v-col>
                                 </v-row>
@@ -30,9 +30,16 @@
                         <br><v-btn type="submit" color="blue">บันทึกคะแนน</v-btn><br><br><br>
                     </div>
                 </v-form>
-                <v-alert v-else-if="user.status_eva === 2 || user.status_eva === 3" type="success"></v-alert>
+                <v-alert v-else-if="user.status_eva === 2 || user.status_eva === 3" type="success">ประเมินสำเร็จสำเร็จแล้ว</v-alert>
+                <v-alert v-else type="warning">ยังไม่มีแบบประเมิน</v-alert>
             </v-col>
         </v-row>
+        <v-snackbar v-model="notify.show" :color="notify.color" location="top" timeout="3000">
+        {{ notify.text }}
+        <template v-slot:actions>
+            <v-btn variant="text" @click="notify.show = false">ปิด</v-btn>
+        </template>
+    </v-snackbar>
     </v-container>
 </template>
 
@@ -41,6 +48,17 @@ const user = ref<any>({})
 const topics = ref<any>([])
 import axios from 'axios'
 import {eva} from '../../API/base'
+
+// alert
+// 1. สร้างตัวแปรเก็บสถานะ
+const notify = reactive({ show: false, text: '', color: 'success' })
+
+// 2. ฟังก์ชันเรียกใช้ (สั้นๆ)
+const alertMsg = (text: string, isError = false) => {
+    notify.text = text
+    notify.color = isError ? 'warning' : 'success' // ถ้า Error สีแดง, ถ้าปกติ สีเขียว
+    notify.show = true
+}
 
 const fetchUser = async () =>{
     const token = localStorage.getItem('token')
@@ -90,16 +108,17 @@ const saveScore = async () =>{
         })
     )
     if(allScore.some((s:any) => !s.score)){
-        alert('กรุณากรอกคะแนนให้ครบ')
+        alertMsg('กรุณากรอกคะแนนให้ครบ', true)
         return
     }
     formData.append('scores',JSON.stringify(allScore))
     try{
         await axios.post(`${eva}/selfeva/save`,formData,{headers:{Authorization:`Bearer ${token}`}})
-        alert('บันทึกคะแนนสำเร็จ')
+        alertMsg('บันทึกคะแนนสำเร็จ')
         await Promise.all([fetchTopic(),fetchUser()])
     }catch(err){
         console.error('Error POST Score!',err)
+        alertMsg('เกิดข้อผิดพลาด บันทึกไม่สำเร็จ', true)
     }
 }
 
