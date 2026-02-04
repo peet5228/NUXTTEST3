@@ -5,7 +5,7 @@ const pool = mysql.createPool({
     password:'1234',
     database:'wday',
     dateStrings:true,
-    timezone: '+07:00s',
+    timezone: '+07:00',
 })
 
 module.exports = pool.promise()
