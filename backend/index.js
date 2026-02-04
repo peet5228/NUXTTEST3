@@ -56,6 +56,9 @@ app.use('/api/Eva/selfeva',selfeva)
 const score_member = require('./routes/Eva/score_member')
 app.use('/api/Eva/score_member',score_member)
 
+const score_commit = require('./routes/Eva/score_commit')
+app.use('/api/Eva/score_commit',score_commit)
+
 // Endpoint Commit API
 const show_eva = require('./routes/Commit/show_eva')
 app.use('/api/Commit/show_eva',show_eva)
@@ -71,6 +74,9 @@ app.use('/api/Commit/score_member',score_member2)
 
 const score_commit2 = require('./routes/Commit/score_commit')
 app.use('/api/Commit/score_commit',score_commit2)
+
+const signature = require('./routes/Commit/signature')
+app.use('/api/Commit/signature',signature)
 
 // 404
 app.use((req,res) => res.status(404).json({message:'Invalid Routes'}))
