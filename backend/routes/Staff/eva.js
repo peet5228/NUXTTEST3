@@ -31,6 +31,18 @@ router.get('/',verifyToken,requireRole('ฝ่ายบุคลากร'),asyn
     }
 })
 
+// API สำหรับ Get ข้อมูล
+router.get('/all',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
+    try{
+        const [rows] = await db.query(`select * from tb_member , tb_eva , tb_system where tb_eva.id_member=tb_member.id_member and tb_eva.id_sys=tb_system.id_sys order by id_eva desc`)
+        res.json(rows)
+        // res.json({rows,message:''})
+    }catch(err){
+        console.error("Error Get",err)
+        res.status(500).json({message:'Error Get'})
+    }
+})
+
 // API สำหรับ Get ข้อมูล where params
 router.get('/:id_eva',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
     try{
@@ -45,17 +57,6 @@ router.get('/:id_eva',verifyToken,requireRole('ฝ่ายบุคลากร
     }
 })
 
-// API สำหรับ Get ข้อมูล
-router.get('/all',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
-    try{
-        const [rows] = await db.query(`select * from tb_member , tb_eva , tb_system where tb_eva.id_member=tb_member.id_member and tb_eva.id_sys=tb_system.id_sys order by id_eva desc`)
-        res.json(rows)
-        // res.json({rows,message:''})
-    }catch(err){
-        console.error("Error Get",err)
-        res.status(500).json({message:'Error Get'})
-    }
-})
 
 // API สำหรับ Get ข้อมูล
 router.get('/y',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {

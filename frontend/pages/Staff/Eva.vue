@@ -44,7 +44,7 @@
                                     <td class="text-center border">{{ index+1 }}</td>
                                     <td class="text-center border">{{ items.first_name }} {{ items.last_name }}</td>
                                     <td class="text-center border">{{ items.day_eva }}</td>
-                                    <td class="text-center border">รอบการประเมินที่ {{ items.round_sys }} ปี {{ items.status_sys }}</td>
+                                    <td class="text-center border">รอบการประเมินที่ {{ items.round_sys }} ปี {{ items.year_sys }}</td>
                                     <td class="text-center border">{{ items.status_eva === 1 ? 'ยังไม่ได้ประเมิน' : items.status_eva === 2 ? 'รอกรรมการประเมิน' : 'ประเมินเสร็จสิ้น' }}</td>
                                     <td class="text-center border">
                                         <v-btn color="warning" size="small" class="text-white" @click="edit(items)">แก้ไข</v-btn>&nbsp;
