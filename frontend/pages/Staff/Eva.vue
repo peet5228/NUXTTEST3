@@ -8,23 +8,17 @@
                         <v-form @submit.prevent="saveMember">
                             <v-row>
                                 <v-col cols="12" md="6">
-                                    <v-text-field label="วันที่เปิดรอบการประเมิน" type="date" v-model="form.day_open" :error-messages="error.day_open" />
-                                </v-col>
-                                <v-col cols="12" md="6">
-                                    <v-text-field label="วันที่ปิดรอบการประเมิน" type="date" v-model="form.day_out" :error-messages="error.day_out" />
-                                </v-col>
-                                <v-col cols="12" md="12">
-                                    <v-select label="รอบการประเมิน" v-model="form.round_sys" :items="[{title:'รอบการประเมินที่ 1',value:'1'},{title:'รอบการประเมินที่ 2',value:'2'}]" :error-messages="error.round_sys" />
+                                    <v-select label="เลือกผู้รับการประเมินผล" v-model="form.id_member" :items="member.map(p => ({title:`${p.first_name} ${p.last_name}`,value: p.id_member}))":error-messages="error.round_sys" />
                                 </v-col>
                                  <v-col cols="12" md="6">
-                                    <v-text-field label="ปี" type="number" v-model="form.year_sys" :error-messages="error.year_sys" />
+                                    <v-text-field label="วันที่ออกแบบประเมิน" type="date" v-model="form.day_eva" :error-messages="error.day_eva" />
                                 </v-col>
-                                <v-col cols="12" md="6">
-                                    <v-select label="สถานะ เปิด-ปิด รอบการประเมิน" v-model="form.status_sys" :items="[{title:'เปิด',value:'y'},{title:'ปิด',value:'n'}]" :error-messages="error.status_sys" />
+                                <v-col cols="12" md="12">
+                                    <v-select label="เลือกผู้รับการประเมินผล" v-model="form.id_sys" :items="round.map(p => ({title:`รอบการประเมินที่ ${p.round_sys} ปี ${p.year_sys}`,value: p.id_sys}))":error-messages="error.id_sys" />
                                 </v-col>
                                 <v-row>
                                     <v-col cols="12" md="6">
-                                        <v-btn color="blue" block type="submit">{{ form.id_sys ? 'อัปเดต' : 'บันทึก' }}</v-btn>
+                                        <v-btn color="blue" block type="submit">{{ form.id_eva ? 'อัปเดต' : 'บันทึก' }}</v-btn>
                                     </v-col>
                                     <v-col cols="12" md="6">
                                         <v-btn color="error" block type="reset">ยกเลิก</v-btn>
@@ -37,23 +31,28 @@
                             <thead>
                                 <tr>
                                     <th class="text-center border">ลำดับ</th>
-                                    <th class="text-center border">วันที่เปิดรอบการประเมิน</th>
-                                    <th class="text-center border">วันที่ปิดรอบการประเมิน</th>
+                                    <th class="text-center border">ผู้รับการประเมิน</th>
+                                    <th class="text-center border">วันที่ออกแบบการประเมิน</th>
                                     <th class="text-center border">รอบการประเมิน</th>
-                                    <th class="text-center border">สถานะ เปิด-ปิด รอบการประเมิน</th>
+                                    <th class="text-center border">สถานะการประเมิน</th>
                                     <th class="text-center border">จัดการ</th>
+                                    <th class="text-center border">เพิ่มกรรมการ</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(items,index) in result" :key="items.id_sys">
+                                <tr v-for="(items,index) in result" :key="items.id_eva">
                                     <td class="text-center border">{{ index+1 }}</td>
-                                    <td class="text-center border">{{ items.day_open }}</td>
-                                    <td class="text-center border">{{ items.day_out }}</td>
+                                    <td class="text-center border">{{ items.first_name }} {{ items.last_name }}</td>
+                                    <td class="text-center border">{{ items.day_eva }}</td>
                                     <td class="text-center border">รอบการประเมินที่ {{ items.round_sys }} ปี {{ items.status_sys }}</td>
-                                    <td class="text-center border">{{ items.status_sys === 'y' ? 'เปิด' : 'ปิด' }}</td>
+                                    <td class="text-center border">{{ items.status_eva === 1 ? 'ยังไม่ได้ประเมิน' : items.status_eva === 2 ? 'รอกรรมการประเมิน' : 'ประเมินเสร็จสิ้น' }}</td>
                                     <td class="text-center border">
                                         <v-btn color="warning" size="small" class="text-white" @click="edit(items)">แก้ไข</v-btn>&nbsp;
-                                        <v-btn color="error" size="small" class="text-white" @click="del(items.id_sys)">ลบ</v-btn>
+                                        <v-btn color="error" size="small" class="text-white" @click="del(items.id_eva)">ลบ</v-btn>
+                                    </td>
+                                    <td class="text-center border">
+                                        <!-- <v-btn color="warning" size="small" class="text-white" @click="edit(items)">แก้ไข</v-btn>&nbsp; -->
+                                        <v-btn color="success" size="small" class="text-white" @click="go(items.id_eva)">เพิ่มกรรมการ</v-btn>
                                     </td>
                                 </tr>
                                 <tr v-if="result.length ===0">

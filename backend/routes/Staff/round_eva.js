@@ -33,7 +33,7 @@ router.get('/',verifyToken,requireRole('ฝ่ายบุคลากร'),asyn
 // API สำหรับ Get ข้อมูล
 router.get('/y',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
     try{
-        const [rows] = await db.query(`select * from tb_system where status='y' order by id_sys desc`)
+        const [rows] = await db.query(`select * from tb_system where status_sys='y' order by id_sys desc`)
         res.json(rows)
         // res.json({rows,message:''})
     }catch(err){

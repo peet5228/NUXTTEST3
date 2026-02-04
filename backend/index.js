@@ -34,6 +34,17 @@ app.use('/api/Staff/indicate',indicate)
 const round_eva = require('./routes/Staff/round_eva')
 app.use('/api/Staff/round_eva',round_eva)
 
+const eva = require('./routes/Staff/eva')
+app.use('/api/Staff/eva',eva)
+
+// Endpoint Eva API
+const edit_eva = require('./routes/Eva/edit_eva')
+app.use('/api/Eva/edit_eva',edit_eva)
+
+const selfeva = require('./routes/Eva/selfeva')
+app.use('/api/Eva/selfeva',selfeva)
+
+// 404
 app.use((req,res) => res.status(404).json({message:'Invalid Routes'}))
 
 app.listen(3001 , () => console.log('Server Running On Port 3001'))
