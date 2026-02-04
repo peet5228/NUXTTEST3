@@ -66,6 +66,7 @@ const roles = [
     {title:'รายชื่อผู้รับประเมิน',to:'/Committee/',role:'กรรมการประเมิน'},
     {title:'ดำเนินการประเมิน',to:'/Committee/Show_eva',role:'กรรมการประเมิน'},
     {title:'ตรวจสอบผลการประเมิน',to:'/Committee/Check_confirm',role:'กรรมการประเมิน'},
+    {title:'คู่มือสำหรับการประเมิน',to:'/Committee/doc',role:'กรรมการประเมิน'},
 
     //eva
     {title:'หน้าหลัก',to:'/Evaluatee/',role:'ผู้รับการประเมินผล'},

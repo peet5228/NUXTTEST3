@@ -2,7 +2,7 @@
     <v-container fluid class="py-10">
                 <v-card>
                     <v-sheet class="pa-4 text-center" color="">
-                        <h1 class="text-h5 font-weight-bold">จัดแบบประเมิน</h1>
+                        <h1 class="text-h5 font-weight-bold">เพิ่มกรรมการ</h1>
                         <p class="text-center">ผู้รับการประเมิน : {{ header.first_name }} {{ header.last_name }}</p>
                         <p class="text-center">รอบการประเมิน : รอบการประเมินที่ {{ header.round_sys }} ปี {{ header.year_sys }}</p>
                     </v-sheet>
