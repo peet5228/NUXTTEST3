@@ -9,6 +9,7 @@
       <v-btn icon="mdi-logout" variant="text" @click="logout" />&nbsp;&nbsp;
     </v-app-bar>
 
+    <ClientOnly>
     <v-navigation-drawer v-model="drawer" color="#404040" app :temporary="isMobile" :permanent="!isMobile">
       <v-list density="comfortable">
         <v-list-item v-for="item of navitem" :key="item.title" :to="item.to">
@@ -18,6 +19,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+    </ClientOnly>
 
     <v-main>
       <v-container fluid class="py-4">
@@ -53,6 +55,8 @@ const roles = [
 
     //eva
     {title:'หน้าหลัก',to:'/Evaluatee/',role:'ผู้รับการประเมินผล'},
+    {title:'แก้ไขมูลส่วนตัว',to:'/Evaluatee/Edit_eva',role:'ผู้รับการประเมินผล'},
+    {title:'แบบประเมินตนเอง',to:'/Evaluatee/Selfeva',role:'ผู้รับการประเมินผล'},
 ]
 const navitem = computed(() => roles.filter((item) => item.role.includes(user.value.role)))
 
